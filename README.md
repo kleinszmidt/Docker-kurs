@@ -83,3 +83,90 @@ oraz zmiana nazwy obrazu `docker tag skni_img juliakleinszmidt/obraz`
 `docker cp elegant_ptolemy:/skni.txt .`
 ![opis](images/kopiowanie.png)
 
+#### Uruchomienie Dockerfile
+`notepad Dockerfile`
+Do obrazu Ubuntu dodalismy nasz plik skni wszystko wpisane i otworzone w notatniku
+
+![opis](images/notatnik.png)
+
+Następnie by sprawdzic zawartość 
+`dir`
+oraz `docker build .` by zbudować Dockerfile
+![opis](images/dockerbuild.png)
+
+Zmiana nazwy
+`docker build --tag mojvim .`
+`docker tag mojvim:latest mojvim:2.0`
+`docker images`
+![opis](images/mojvim.png)
+
+Zbudowanie nowego obrazau ubuntu 20.04
+`docker build --tag mojvim:ubuntu20 .`
+![opis](images/ubuntu20.04.png)
+
+Utworzenie nowego katalogu ctx, a następnie umieszczenie w nim obrazu 
+`echo "asd" > skni.txt`
+`docker build -f ../Dockerfile .`
+![opis](images/ctx.png)
+`docker run 682a85 cat /usr/src/app/skni.txt`
+![opis](images/nowy.png)
+
+
+Otworzenie Dockerfile w nowym katalogu oraz skopiowanie do niego pliku
+
+![opis](images/kontekst.png)
+
+Następnie usunięcie skni.txt z poprzedniego katalogu
+`del skni.txt`
+i sprawdzenie zawartości z katalogu wyżej
+`dir` a potem `dir ..`
+
+Odpalić Dockerfile z niższego katalogu ale niestety już występuje błąd. 
+
+### Konteneryzacja aplikacji konsolowej i webowej  
+Znalezienie lokalizacji pythona
+`cd "C:\Users\klein\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Python 3.12"`
+
+Następnie uwtorzenie pliku python2
+`mkdir python2`
+
+Następnie tworzenie aplikacji
+`notepad app.py`
+![opis](images/app.py.png)
+
+Następnie plik requirements
+`notepad requirements.txt` - w nim jedynie uruchamiamy flask
+
+Sprawdzamy nasz katalog jaką ma treść
+![opis](images/python2.png)
+
+I tworzymy obraz 
+`docker build --tag pyapp .`
+
+Teraz odpalamy nasz projekt 
+`docker run pyapp`
+![opis](images/aplikacja.png)
+
+Teraz zmieniamy w Dockerfile kod 
+```
+FROM python:3.8
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY app.py .
+
+CMD FLASK_APP=app python -m flask run --host=0.0.0.0
+
+```
+
+`docker build -t pyapp:web .`
+`docker run pyapp:web`
+![opis](images/web.png)
+`docker run --publish 5000 pyapp:web`
+`docker ps`
+![opis](images/dockerps.png)
+
+Wpisanie dwóch portów, podpinanie portów z kontenera na porty na moim komputerze
+`docker run --publish 5123:5000 pyapp .`
+
