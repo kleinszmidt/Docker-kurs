@@ -170,3 +170,65 @@ CMD FLASK_APP=app python -m flask run --host=0.0.0.0
 Wpisanie dwóch portów, podpinanie portów z kontenera na porty na moim komputerze
 `docker run --publish 5123:5000 pyapp .`
 
+### CMD I ENTRYPOINT
+`notepad cmd.Dockerfile` a w nim: 
+```
+FROM ubuntu
+
+RUN mkdir /test
+RUN touch /test/file.txt
+
+CMD ls /test 
+```
+`docker build -f cmd.Dockerfile -t cmd .`
+![opis](images/cmd.png)
+
+Na koniec wyświetla się zawartość katalogu
+`docker run cmd`
+
+![opis](images/runcmd.png)
+
+`docker run cmd uname -a`
+I pokazuje wersje jądra systemu operacyjnego
+`Linux a54faa72670a 5.15.146.1-microsoft-standard-WSL2 #1 SMP Thu Jan 11 04:09:03 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux`
+
+Teraz tworzymy plik `notepad entrypoint.Dockerfile`
+```
+FROM ubuntu
+
+RUN mkdir /test
+RUN touch /test/file.txt
+
+ENTRYPOINT ["ls", "-al"]
+
+```
+`docker build -f entrypoint.Dockerfile -t entry .`
+`docker run entry`
+![opis](images/entrypoint.png)
+
+
+### VOLUME
+`docker volume create moj-volume`
+![opis](images/volume.png)
+
+`notepad vol.Dockerfile` z zawartością: 
+
+```
+FROM ubuntu 
+
+WORKDIR /katalog
+
+CMD ls -al && echo "test" > file.txt && ls -al
+```
+
+`docker build -f vol.Dockerfile -t vol_test .`
+`docker run vol_test`
+![opis](images/vol_test.png)
+Przechowywanie danych między różnymi kontenerami
+
+`docker run --volume moj-volume:/katalog vol_test`
+![opis](images/--volume.png)
+
+Następnie usunięcie kontenerów vol_test
+`docker rm 6017 523d 1cdd`
+ale docker volume nadal żyje 
