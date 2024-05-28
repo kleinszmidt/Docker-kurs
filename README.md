@@ -232,3 +232,66 @@ Przechowywanie danych między różnymi kontenerami
 Następnie usunięcie kontenerów vol_test
 `docker rm 6017 523d 1cdd`
 ale docker volume nadal żyje 
+
+
+
+#### Anonimowe wolumeny nie trzeba podawac nazw volumenow docker sam je tworzy
+`docker run --volume /katalog vol_test`
+![opis](images/katalog.png)
+
+
+#### Bind mount umożliwia łączenie kontenerów z plikami lokalnymi
+`docker run --volume //c/Users/katalog:/katalog vol_test`
+![opis](images/katalogvol.png)
+zawartość katalogu
+`dir katalog`
+![opis](images/zawartosc.png)
+
+
+Obserwacja zmian w katalogu
+`docker run -it --volume //c/Users/katalog:/katalog vol_test watch ls /katalog`
+![opis](images/obserwowanie.png)
+
+
+
+### Baza danych w kontenerze
+Wypisanie wszystkich zmiennych srodowiskowych
+
+`docker run ubuntu env`
+![opis](images/env.png)
+
+Dodanie zmiennej środowiskowej
+
+`docker run -e MOJA_ZMIENNA=true ubuntu env`
+![opis](images/zmienna.png)
+
+
+Wykorzystanie obrazu postgresa do uruchomienia bazy danych w kontenerze
+
+`docker run --name baza --detach -e POSTGRES_PASSWORD=haslo postgres`
+
+![opis](images/postgres.png)
+
+Uruchomienie wiersza polecen postgresa do wykonywania polecen
+`docker exec -it baza psql --username postgres`
+![opis](images/baza.png)
+
+Tworzenie bazy z wolumenami aby zapisywac zmiany
+`docker run --name baza --detach -e POSTGRES_PASSWORD=haslo --volume dane_bazy:/var/lib/postgresql/data po
+stgres`
+![opis](images/zmiany.png)
+![opis](images/starabaza.png)
+
+Gdy na nowo utworzymy baze z tym samym volumenem będziemy miec jej zawartosc
+![opis](images/dt.png)
+
+Podpiecie z zewnatrz z baza
+
+`docker run --name baza --detach -e POSTGRES_PASSWORD=haslo -e POSTGRES_USER=ja --volume dane_bazy:/var/lib/postgresql/data -p 5432:5432 postgres`
+![opis](images/zewnatrz.png)
+
+
+### Docker Inspect
+Wyświetla informacje o kontenerze
+`docker inspect eca8`
+![opis](images/inspect.png)
