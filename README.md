@@ -295,3 +295,58 @@ Podpiecie z zewnatrz z baza
 Wyświetla informacje o kontenerze
 `docker inspect eca8`
 ![opis](images/inspect.png)
+
+
+### Docker Networks- wirtualne sieci w kontenerach
+służa do komunikacji pomiędzy kontenerem a internetem oraz pomiedzy kontenerami na tym samym hostcie. Docker automatycznie tworzy sieci dla kontenerów.
+
+`docker network ls` wypisujemy sieci
+![opis](images/networkls.png)
+
+Uruchamiamy pare kontenerów na podstawie obrazu busybox
+`docker run -dit --name contA busybox`sieć bridge domyślna
+`docker run -dit --name contB busybox`
+![opis](images/budybox.png)
+
+Można korzystac z internetu wewnatrz kontenerów
+`docker network inspect bridge`
+![opis](images/networkinspect.png)
+
+Wiersz poleceń w kontenerze A
+`docker attach contA`
+
+`ip addr` możemy sprawdzic interfejsy sieciowe wewntarz naszego kontenera
+![opis](images/contA.png)
+
+
+`ping google.com` sprawdzenie łączności z internetem
+![opis](images/google.com.png)
+
+`ping 172.17.0.3` skontaktowanie się z kontenerem B
+![opis](images/ping172.png)
+
+Na koniec zastopowanie i usunięcie kontenerów
+
+#### Można tworzyć własne sieci i podłączać te kontenenry do różnych sieci typu bridge w trakcie dzialania kontenerow, mozna dowolnie wybierac kontenery które mogą byc podłaczone do naszej sieci, mozna pingowac po nazwie kontenera
+
+`docker network create --driver bridge moja-siec` - utworzenie własnej sieci
+`docker network ls`
+![opis](images/createmojasiec.png)
+
+Tworzenie kontenerow podlaczonych do sieci domyslnej
+`docker run -dit --name contA busybox`
+
+`docker run -dit --name contB busybox`
+
+Kontener podłączony do sieci moja-siec
+`docker run -dit --name contC --network moja-siec busybox`
+![opis](images/kontenerypodlaczone.png)
+
+`docker network connect moja-siec contB` podlaczenie kontenerow do konkretnej sieci
+![opis](images/contBmojasiec.png)
+
+W kontenerze C działania takie same jak w poprzedniej czesci i polaczenie z contB
+![opis](images/contC.png)
+
+Kontener B znajduje sie w dwoch sieciach
+![opis](images/dostepcontB.png) jedynie nie moglam sie polaczyc do contC
