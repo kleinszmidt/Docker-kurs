@@ -350,3 +350,46 @@ W kontenerze C działania takie same jak w poprzedniej czesci i polaczenie z con
 
 Kontener B znajduje sie w dwoch sieciach
 ![opis](images/dostepcontB.png) jedynie nie moglam sie polaczyc do contC
+
+
+### Łączenie kontenerów 
+`docker network create baza-net`- utworzenie sieci
+
+`docker run --name baza -v dane_bazy:/var/lib/postgresql/data -e POSTGRES_DB=mojabaza -e POSTGRES_USER=ja -e POSTGRES_PASSWORD=mojehaslo --network baza-net --detach postgres`- utworzenie bazy podpietej pod siec
+![opis](images/kontenerpodsiec.png)
+
+`docker run -p 8080:8080 --network baza-net adminer`- uruchomienie kontenera na konkretnym porcie korzystajac z obrazu adminer
+
+W panelu administracyjnym wpisuje te dane i login jakie zapisalam wcześniej
+![opis](images/adminer.png)
+
+### Docker Compose- system do automatyzacji uruchamiania i budowania wielu kontenerów na raz
+Jest domyślnie zainstalowany
+
+`docker-compose`
+`notepad docker-compose.yml`
+![opis](images/docker-compose.png)
+
+`docker-compose up`
+![opis](images/docker-composeup.png)
+
+logujemy się do panelu tak samo jak poprzednio
+![opis](images/8080.png)
+
+### Uruchomic aplikacje w Django przez Docker compose 
+`docker-compose down` wyłączenie działajacego kontenera
+
+Przechodze do folderu z projektem django
+Tworze w nim dockerfile o tresci
+
+`FROM python:3.8
+WORKDIR app
+RUN pip install Django gunicorn psycopg2
+COPY mysite .
+CMD gunicorn --bind=0.0.0.0:8080 mysite.wsgi`
+
+teraz budujemy obraz
+`docker build -t django_app .`
+![opis](images/django_app.png)
+
+`docker run -p 8082:8080 django_app` sprawdzamy czy nasz obraz sie uruchamia
